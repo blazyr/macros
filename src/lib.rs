@@ -16,7 +16,47 @@ pub fn entry_point(attr: TokenStream, item: TokenStream) -> TokenStream {
         #ast2
 
         #[no_mangle]
-        pub fn entry_point() -> Result<()> {
+        pub fn __entry_point() -> std::result::Result<(), std::boxed::Box<dyn std::error::Error>> {
+            #function_name()
+        }
+    );
+    TokenStream::from(result_function)
+}
+
+#[proc_macro_attribute]
+pub fn entities(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let tokens = item;
+    let ast: ItemFn = syn::parse(tokens).unwrap();
+    let ast2: ItemFn = ast.clone();
+
+    let return_type = ast.sig.output;
+    let function_name = ast.sig.ident;
+
+    let result_function = quote!(
+        #ast2
+
+        #[no_mangle]
+        pub fn __data_transfer() -> std::result::Result<spotlight_extension::Entity, std::boxed::Box<dyn std::error::Error>> {
+            #function_name()
+        }
+    );
+    TokenStream::from(result_function)
+}
+
+#[proc_macro_attribute]
+pub fn dispose(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let tokens = item;
+    let ast: ItemFn = syn::parse(tokens).unwrap();
+    let ast2: ItemFn = ast.clone();
+
+    let return_type = ast.sig.output;
+    let function_name = ast.sig.ident;
+
+    let result_function = quote!(
+        #ast2
+
+        #[no_mangle]
+        pub fn __dispose() -> std::result::Result<(), std::boxed::Box<dyn std::error::Error>> {
             #function_name()
         }
     );
@@ -49,67 +89,12 @@ mod test {
         let return_type = ast.sig.output;
         let function_name = ast.sig.ident;
 
-        let result_function = quote!({
-
+        let result_function = quote!(
             #[no_mangle]
             pub fn entry_point() -> Result<()> {
                 #function_name()
             }
-        });
-
-        println!("{}", result_function);
-    }
-
-    #[test]
-    fn entities_transfer_test() {
-        // struct sample
-        let s = r#"pub fn buzz() -> Result<String>{
-            Ok("coucou".to_string())
-        }"#;
-
-        // create a new token stream from our string
-        let tokens = TokenStream::from_str(s).unwrap();
-
-        // build the AST: note the syn::parse2() method rather than the syn::parse() one
-        // which is meant for "real" procedural macros
-        let ast: ItemFn = syn::parse2(tokens).unwrap();
-
-        let return_type = ast.sig.output;
-        let function_name = ast.sig.ident;
-
-        let result_function = quote!({
-            #[no_mangle]
-            pub fn entities_transfer() -> Result<Vec<Entity>> {
-                #function_name()
-            }
-        });
-
-        println!("{}", result_function);
-    }
-
-    #[test]
-    fn dispose_test() {
-        // struct sample
-        let s = r#"pub fn buzz() -> Result<String>{
-            Ok("coucou".to_string())
-        }"#;
-
-        // create a new token stream from our string
-        let tokens = TokenStream::from_str(s).unwrap();
-
-        // build the AST: note the syn::parse2() method rather than the syn::parse() one
-        // which is meant for "real" procedural macros
-        let ast: ItemFn = syn::parse2(tokens).unwrap();
-
-        let return_type = ast.sig.output;
-        let function_name = ast.sig.ident;
-
-        let result_function = quote!({
-            #[no_mangle]
-            pub fn dispose() -> Result<()> {
-                #function_name()
-            }
-        });
+        );
 
         println!("{}", result_function);
     }
