@@ -36,7 +36,7 @@ pub fn entities(attr: TokenStream, item: TokenStream) -> TokenStream {
         #ast2
 
         #[no_mangle]
-        pub fn __data_transfer() -> std::result::Result<spotlight_extension::Entity, std::boxed::Box<dyn std::error::Error>> {
+        pub fn __data_transfer() -> std::result::Result<Vec<spotlight_extension::Entity>, std::boxed::Box<dyn std::error::Error>> {
             #function_name().map_err(std::boxed::Box::from)
         }
     );
