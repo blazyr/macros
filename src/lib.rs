@@ -17,7 +17,7 @@ pub fn entry_point(attr: TokenStream, item: TokenStream) -> TokenStream {
 
         #[no_mangle]
         pub fn __entry_point() -> std::result::Result<(), std::boxed::Box<dyn std::error::Error>> {
-            #function_name()
+            #function_name().map_err(std::boxed::Box::from)
         }
     );
     TokenStream::from(result_function)
@@ -37,7 +37,7 @@ pub fn entities(attr: TokenStream, item: TokenStream) -> TokenStream {
 
         #[no_mangle]
         pub fn __data_transfer() -> std::result::Result<spotlight_extension::Entity, std::boxed::Box<dyn std::error::Error>> {
-            #function_name()
+            #function_name().map_err(std::boxed::Box::from)
         }
     );
     TokenStream::from(result_function)
@@ -57,7 +57,7 @@ pub fn dispose(attr: TokenStream, item: TokenStream) -> TokenStream {
 
         #[no_mangle]
         pub fn __dispose() -> std::result::Result<(), std::boxed::Box<dyn std::error::Error>> {
-            #function_name()
+            #function_name().map_err(std::boxed::Box::from)
         }
     );
     TokenStream::from(result_function)
