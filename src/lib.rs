@@ -7,16 +7,19 @@ use syn::ItemFn;
 pub fn entry_point(attr: TokenStream, item: TokenStream) -> TokenStream {
     let tokens = item;
     let ast: ItemFn = syn::parse(tokens).unwrap();
+    let ast2: ItemFn = ast.clone();
 
     let return_type = ast.sig.output;
     let function_name = ast.sig.ident;
 
-    let result_function = quote!({
+    let result_function = quote!(
+        #ast2
+
         #[no_mangle]
         pub fn entry_point() -> Result<()> {
             #function_name()
         }
-    });
+    );
     TokenStream::from(result_function)
 }
 
@@ -47,6 +50,7 @@ mod test {
         let function_name = ast.sig.ident;
 
         let result_function = quote!({
+
             #[no_mangle]
             pub fn entry_point() -> Result<()> {
                 #function_name()
